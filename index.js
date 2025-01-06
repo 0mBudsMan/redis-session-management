@@ -5,9 +5,11 @@ const Redis = require('ioredis');
 const connectRedis = require('connect-redis');
 const mongoose = require('mongoose');
 const router = require('./routes');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
