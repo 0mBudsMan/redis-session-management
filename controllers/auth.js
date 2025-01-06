@@ -62,7 +62,7 @@ async function login(req, res) {
         }
 
         req.session.user = user;
-       
+        req.session.userId = user.id;
 
         res.json({ message: 'Login successful' });
     } catch (err) {

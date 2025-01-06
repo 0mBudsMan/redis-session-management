@@ -9,7 +9,7 @@ const cookieParser = require('cookie-parser');
 
 const app = express();
 app.use(express.json());
-app.use(cookieParser());
+app.use(cookieParser());    
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -42,7 +42,7 @@ async function startServer() {
             cookie: {
                 secure: false,
                 httpOnly: true,
-                maxAge: 60000,
+                maxAge: 600000000,
             },
         }));
 
