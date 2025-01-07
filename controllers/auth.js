@@ -65,7 +65,7 @@ async function login(req, res) {
         req.session.userId = user.id;
         
         //For authenticated users, sync preferences and session data across devices.
-        req.session.visitedPages=user.visitedPages;
+        req.session.visitedPages=user.pageVisited;
         req.session.currentPage=user.currentPage;
         req.session.timestamp=user.timestamp;
         req.session.preferences=user.preferences;

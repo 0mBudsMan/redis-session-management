@@ -3,6 +3,7 @@ const syncWithMongo = require("../utils/mongosync");
 const UserAction = require("../models/UserAction");
 
 async function createSession(req, res) {
+try{
   if (!req.session || !req.session.user) {
     //if no session exists already, create a new session with random id
     req.session.id = Math.random().toString(36).substring(2, 10);
@@ -15,8 +16,13 @@ async function createSession(req, res) {
     message: "A session exists already, no need to create new one again!",
   });
 }
+catch(e){
+    console.error(e);
+    res.status(500).json({ message: "Server error." });
+}}
 
 async function logPage(req, res) {
+    try{
   const { page } = req.body;
   //session will have a currentPage, and an array of all the visited pages
   const now = Date.now();
@@ -50,8 +56,13 @@ async function logPage(req, res) {
     .status(200)
     .json({ message: `Logged visit to ${page} and synced with mongoDB` });
 }
+catch(e){
+    console.error(e);
+    res.status(500).json({ message: "Server error." });
+}}
 
 async function getSessionDetails(req, res) {
+    try{
   if (!req.session || !req.session.user) {
     return res.status(401).json({ message: "Unauthorized." });
   }
@@ -76,9 +87,15 @@ async function getSessionDetails(req, res) {
     data: paginatedData,
   });
 }
+catch(e){
+    console.error(e);
+    res.status(500).json({ message: "Server error." });
+}}
+
 
 
 async function deleteSession(req, res) {
+    try{
   if (!req.session || !req.session.user) {
     return res.status(401).json({ message: "Unauthorized." });
   }
@@ -94,6 +111,10 @@ async function deleteSession(req, res) {
 
   res.status(200).json({ message: "Session deleted successfully." });
 }
+catch(e){
+    console.error(e);
+    res.status(500).json({ message: "Server error." });
+}}
 
 module.exports = {
   createSession,
