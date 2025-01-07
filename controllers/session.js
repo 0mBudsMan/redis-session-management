@@ -1,5 +1,6 @@
 const { now } = require("mongoose");
 const syncWithMongo = require("../utils/mongosync");
+const UserAction = require("../models/UserAction");
 
 async function createSession(req, res) {
   if (!req.session || !req.session.user) {
@@ -28,13 +29,26 @@ async function logPage(req, res) {
   } else {
     const lastPage = req.session.currentPage;
     const duration = now - req.session.timestamp;
-    
+
     req.session.visitedPages.push({ page: lastPage, duration: duration });
     req.session.currentPage = page;
     req.session.timestamp = now;
   }
-  if(req.session.user) await syncWithMongo(req);
-  res.status(200).json({ message: `Logged visit to ${page} and synced with mongoDB` });
+  if (req.session.user) {
+    await syncWithMongo(req); //sync with mongodb
+    await UserAction.create({
+      userId: req.session.userId,
+      actions: [
+        {
+          action: `Visited ${page}`,
+          timestamp: now,
+        },
+      ],
+    });
+  }
+  res
+    .status(200)
+    .json({ message: `Logged visit to ${page} and synced with mongoDB` });
 }
 
 async function getSessionDetails(req, res) {
@@ -57,7 +71,7 @@ async function deleteSession(req, res) {
       duration: now() - req.session.timestamp,
     });
   req.session.destroy();
-  
+
   res.status(200).json({ message: "Session deleted successfully." });
 }
 
