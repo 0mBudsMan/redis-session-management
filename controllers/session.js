@@ -55,8 +55,28 @@ async function getSessionDetails(req, res) {
   if (!req.session || !req.session.user) {
     return res.status(401).json({ message: "Unauthorized." });
   }
-  res.status(200).json({ session: req.session });
+  const pageVisited = req.session.visitedPages || [];
+
+  // Extract pagination parameters from query
+  const page = parseInt(req.query.page, 10) || 1; // Default to page 1
+  const limit = parseInt(req.query.limit, 10) || 10; // Default to 10 items per page
+
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+
+  // Paginate the data
+  const paginatedData = pageVisited.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(pageVisited.length / limit);
+
+  res.status(200).json({
+    currentPage: page,
+    totalPages,
+    totalEntries: pageVisited.length,
+    limit,
+    data: paginatedData,
+  });
 }
+
 
 async function deleteSession(req, res) {
   if (!req.session || !req.session.user) {
