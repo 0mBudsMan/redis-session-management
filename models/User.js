@@ -11,6 +11,15 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    pageVisited: {
+        type: Array,
+        default: [],
+    },
+    preferences: {
+        type: Object,
+        default: {},
+    },
+
 });
 
 

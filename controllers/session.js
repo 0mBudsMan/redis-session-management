@@ -1,4 +1,5 @@
 const { now } = require("mongoose");
+const syncWithMongo = require("../utils/mongosync");
 
 async function createSession(req, res) {
   if (!req.session || !req.session.user) {
@@ -32,7 +33,8 @@ async function logPage(req, res) {
     req.session.currentPage = page;
     req.session.timestamp = now;
   }
-  res.status(200).json({ message: `Logged visit to ${page}` });
+  if(req.session.user) await syncWithMongo(req);
+  res.status(200).json({ message: `Logged visit to ${page} and synced with mongoDB` });
 }
 
 async function getSessionDetails(req, res) {
